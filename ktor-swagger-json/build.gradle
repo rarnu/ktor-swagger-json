@@ -1,0 +1,70 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        //noinspection DifferentKotlinGradleVersion
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "org.jetbrains.kotlin.jvm"
+apply plugin: "maven-publish"
+
+group 'com.rarnu'
+version '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    google()
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+    maven { url 'https://kotlin.bintray.com/ktor' }
+    maven { url 'https://raw.githubusercontent.com/rarnu/repository/master' }
+}
+
+dependencies {
+    compile "com.rarnu:common-jvm:1.1.1"
+    implementation "org.slf4j:slf4j-api:1.7.30"
+
+    // test
+    testImplementation "io.ktor:ktor-server-servlet:$ktor_version"
+    testImplementation "io.ktor:ktor-server-netty:$ktor_version"
+    testImplementation "io.ktor:ktor-server-core:$ktor_version"
+    testImplementation "io.ktor:ktor-server-host-common:$ktor_version"
+    testImplementation "io.ktor:ktor-server-sessions:$ktor_version"
+    testImplementation 'junit:junit:4.12'
+}
+
+jar {
+    from {
+        configurations.runtime.collect{zipTree(it)}
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier "sources"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourceJar
+        }
+    }
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ? nexusSnapshotUrl : nexusUploadUrl
+            credentials {
+                username nexusAccount
+                password nexusPassword
+            }
+        }
+    }
+}

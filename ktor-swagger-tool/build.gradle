@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://kotlin.bintray.com/ktor' }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+repositories {
+    google()
+    mavenCentral()
+    jcenter()
+    mavenLocal()
+    maven { url 'https://kotlin.bintray.com/ktor' }
+    maven { url 'https://raw.githubusercontent.com/rarnu/repository/master' }
+    maven {
+        credentials {
+            username "development"
+            password "1sysc0re@nexus"
+        }
+        url 'http://10.30.30.3:8081/repository/maven-public'
+    }
+}
+
+dependencies {
+    compile "com.rarnu:common-jvm:1.1.2"
+    compile "com.google.code.gson:gson:2.8.6"
+}
+
+mainClassName = 'com.rarnu.ksj.tool.MainKt'
+
+jar {
+    from {
+        configurations.runtime.collect{zipTree(it)}
+    }
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
