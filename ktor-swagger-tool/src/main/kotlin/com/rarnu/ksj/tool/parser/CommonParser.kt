@@ -18,6 +18,9 @@ object CommonParser {
     fun dataClassName(a: String): String =
         a.replace("data class", "").run { substring(0, indexOf("(")) }.trim()
 
+    fun controllerName(a: String): String =
+        a.replace("fun Routing.", "").run { substring(0, indexOf("(")) }.trim()
+
     fun annotationProperty(anno: String, c: String): Septuple<String, String?, String?, String, String?, String?, String?> {
         val aMap = annotationMap(anno.replace("@SWProperty", ""))
         val (name, type) = fieldInfo(c)
@@ -47,6 +50,24 @@ object CommonParser {
             return "array" to cType
         }
         return "#/definitions/$t" to null
-
     }
+
+    fun group(list: List<String>): List<List<String>> {
+        val ret = mutableListOf<List<String>>()
+        var innerList: MutableList<String>? = null
+        for (s in list) {
+            if (s.startsWith("@SWOperation")) {
+                if (innerList != null) {
+                    ret.add(innerList)
+                }
+                innerList = mutableListOf()
+                innerList.add(s)
+                continue
+            }
+            innerList?.add(s)
+        }
+        if (innerList != null) ret.add(innerList)
+        return ret
+    }
+
 }

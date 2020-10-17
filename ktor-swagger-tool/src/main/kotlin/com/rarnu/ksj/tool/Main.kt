@@ -21,14 +21,15 @@ fun main(args: Array<String>) {
         return
     }
 
-    fileWalk(fSrc.absolutePath) { f ->
-        if (f.extension == "kt") {
-            collectSWType(f)
-        }
-    }
+    fileWalk(fSrc.absolutePath) { f -> if (f.extension == "kt") { collectSWType(f) } }
+    fileWalk(fSrc.absolutePath) { f -> if (f.extension == "kt") { collectSWController(f) } }
+    collectSWTag()
 
-    val jsonstr = swTypeList.joinToString(",", prefix = "{", postfix = "}") { it.json() }
-    printJson(jsonstr)
+    val tagJson = swTagList.joinToString(",", prefix = "\"tags\":[", postfix = "]") { it.json() }
+    val pathJson = swControllerList.flatMap { it.third }.joinToString(",", prefix = "\"paths\":{", postfix = "}") { it.json() }
+    val defJson = swTypeList.joinToString(",", prefix = "\"definitions\":{", postfix = "}") { it.json() }
+    val swaggerJson = "{$tagJson,$pathJson,$defJson}"
+    printJson(swaggerJson)
 
 }
 

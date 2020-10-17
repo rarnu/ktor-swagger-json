@@ -6,17 +6,7 @@ import com.rarnu.ksj.tool.parser.CommonParser.convertType
 import com.rarnu.ksj.tool.parser.CommonParser.dataClassName
 import com.rarnu.ksj.tool.part.Property
 
-
-/*
-(value = "MyRetData", title = "返回测试数据类")
-data class MyRetData(
-        @SWProperty(name = "code", value = "返回码", type = "integer", required = true)
-        val code: Int,
-        @SWProperty(name = "msg", value = "返回字符串", type = "string", required = true)
-        val msg: String)
- */
-
-class DataClassParser(val code: String) {
+class DataClassParser(code: String) {
 
     var swName: String? = ""
     var swValue: String? = ""
@@ -47,9 +37,5 @@ class DataClassParser(val code: String) {
             propertyList.add(prop)
         }
     }
-
-
-
-
 
 }

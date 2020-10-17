@@ -46,7 +46,7 @@ data class Definition(
     fun json(): String {
         var str = "\"$name\":{"
         str += if (type == null) "\"type\":\"object\"," else "\"type\":\"$type\","
-        str += "\"required\":[${required?.map { "\"$it\"" }?.joinToString(",") ?: ""}],"
+        str += "\"required\":[${required?.joinToString(",") { "\"$it\"" } ?: ""}],"
         str += "\"properties\":{${properties?.joinToString(",") { it.json() } ?: ""}},"
         str += if (title == null) "\"title\":\"$name\"" else "\"title\":\"$title\""
         str += "}"
