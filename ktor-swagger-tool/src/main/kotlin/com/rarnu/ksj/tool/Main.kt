@@ -23,13 +23,18 @@ fun main(args: Array<String>) {
 
     fileWalk(fSrc.absolutePath) { f -> if (f.extension == "kt") { collectSWType(f) } }
     fileWalk(fSrc.absolutePath) { f -> if (f.extension == "kt") { collectSWController(f) } }
+    fileWalk(fSrc.absolutePath) { f -> if (f.extension == "kt") { collectBaseInfo(f) } }
     collectSWTag()
 
-    val tagJson = swTagList.joinToString(",", prefix = "\"tags\":[", postfix = "]") { it.json() }
-    val pathJson = swControllerList.flatMap { it.third }.joinToString(",", prefix = "\"paths\":{", postfix = "}") { it.json() }
-    val defJson = swTypeList.joinToString(",", prefix = "\"definitions\":{", postfix = "}") { it.json() }
-    val swaggerJson = "{$tagJson,$pathJson,$defJson}"
-    printJson(swaggerJson)
-
+    if (swBaseInfo != null) {
+        val baseJson = swBaseInfo?.json()
+        val tagJson = swTagList.joinToString(",", prefix = "\"tags\":[", postfix = "]") { it.json() }
+        val pathJson = swControllerList.flatMap { it.third }.joinToString(",", prefix = "\"paths\":{", postfix = "}") { it.json() }
+        val defJson = swTypeList.joinToString(",", prefix = "\"definitions\":{", postfix = "}") { it.json() }
+        val swaggerJson = "{$baseJson$tagJson,$pathJson,$defJson}"
+        printJson(swaggerJson)
+    } else {
+        println("Cannot find a Class contains Swagger BaseInfo.")
+    }
 }
 

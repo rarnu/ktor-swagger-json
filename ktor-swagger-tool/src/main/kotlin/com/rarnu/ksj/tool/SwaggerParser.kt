@@ -1,7 +1,9 @@
 package com.rarnu.ksj.tool
 
+import com.rarnu.ksj.tool.parser.BaseInfoParser
 import com.rarnu.ksj.tool.parser.ControllerParser
 import com.rarnu.ksj.tool.parser.DataClassParser
+import com.rarnu.ksj.tool.part.Base
 import com.rarnu.ksj.tool.part.Definition
 import com.rarnu.ksj.tool.part.Operation
 
@@ -33,6 +35,16 @@ object SwaggerParser {
         return list
     }
 
+    fun codeToBaseInfo(code: String): Base? {
+        var base: Base? = null
+        val newCode = code.split("\n").filterNot { it.startsWith("import ") || it.startsWith("package ") || it.trim() == "" }.joinToString("\n")
+        if (newCode.contains("@SWBase")) {
+            val codePart = newCode.substring(newCode.indexOf("@SWBase")).replace("@SWBase", "").run { substring(0, indexOf(")")) }.trim()
+            val p = BaseInfoParser(codePart)
+            base = Base(p.swSwagger, p.swDescription, p.swVersion, p.swTitle, p.swTermsOfService, p.swContactName, p.swContactUrl, p.swContactEmail, p.swHost, p.swBasePath)
+        }
+        return base
+    }
 
 
 }
